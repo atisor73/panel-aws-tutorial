@@ -1,6 +1,15 @@
 # Deploying Panel App in AWS
 As both Streamlit and Bokeh use Tornado (see [this discussion](https://discourse.holoviz.org/t/does-anyone-have-advice-know-of-resources-or-documentation-for-deploying-panel-with-amazon-web-services-aws/1074)), I adapted @upendrak's [Guide to Streamlit in AWS](https://github.com/upendrak/streamlit-aws-tutorial) on an EC2 instance, and was able to get something functioning. The demo should be working here: http://3.21.230.244:5006/.
 
+The general steps are as follow: 
+1. Configure EC2 instance.
+2. Install dependencies on your instance.
+3. Transfer code that runs your app to your instance.
+4. Run panel command that serves app.
+5. View in browser.
+
+<hr> 
+
 ### Configuring instance
 - Set up an EC2 instance with your selected AMI. I selected Ubuntu t2.micro for their free tier.
 - Under "Configure Security Group", add a rule with Type: "Custom TCP Rule", Port Range: 5006, Source: MyIP. This is the port that panel will serve the app on. Two notes:
