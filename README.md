@@ -8,7 +8,7 @@ As both Streamlit and Bokeh use Tornado (see [this discussion](https://discourse
     - *To my understanding, the SSH Source decides which IP addresses can ssh into your instance, and the Port Source decides which IP addresses can send requests to the specified port. On final deployment, I would imagine setting SSH Source to MyIP and Port Source to Anywhere would be the set-up for a publicly available site, though there are other security considerations here.*
 - Launch image and start instance.
 - Connect to your instance: Create a keypair if you don't have one, and download it to your local machine. You may have to change permissions with chmod. `cd` into the directory with the keypair and copy the ssh command under the "Connect" button. This command consists of your keypair file and your instance's Public DNS. This is the domain name associated with the Public IPv4 address assigned to your instance. Note that this Public IP & DNS changes every time you stop/start your instance. 
-    - Public IP address format: `x.x.x.x`, where x represents 128 bit numbers.
+    - Public IP address format: `x.x.x.x`, where x represents 32 or 128 bit numbers.
     - Public DNS format: `ec2-x-x-x-x.us-east-2.compute.amazonaws.com`.
 
 ```bash
@@ -24,7 +24,7 @@ $ ssh -i "CustomName.pem" ubuntu@ec2-3-143-221-24.us-east-2.compute.amazonaws.co
 Once connected, run the following to manage Python package dependencies and requirements. Depending on your app, you may have to install other applications and dependencies.
 ```bash
 $ sudo apt-get update
-$ sudo apt-get install python3-pip
+$ sudo apt-get install -y python3-pip
 ```
 
 
@@ -33,7 +33,7 @@ In the terminal you just ssh'd into, find a way to transfer the code to your ins
 
 ```bash
 $ git clone <repo-link>
-
+$ pip install -r requirements.txt
 
 # Alternatively, scp files/directories from your local machine:
 $ scp -i <keypair-name>.pem <file> <Public DNS>:</path-to-destination/>
@@ -47,6 +47,14 @@ The code in app.py returns a `xyz.servable()` panel object. This command serves 
 $ python3 -m panel serve app.py --address 0.0.0.0 --port 5006 --allow-websocket-origin=<Public IPv4>:5006
 ```
 I currently have this command in `start-app.sh`, which I then run `$ sh start-app.sh` which grabs the AWS Public IP address and port, as stopping/starting your instance changes the Public IP address. 
+
+```
+The app can be viewed in your browser:
+		URL: http://x.x.x.x:5006/
+		where x.x.x.x is your instance's Public IP address.
+```
+
+
 
 ### Miscellaneous Notes
 - Using `nohup` for final deploy: This keeps your session running even when you disconnect from your session. I currently run `start-app.sh` to test, but for the final deploy I run `start-app-nohup.sh`, which has the command `nohup sh start-app-nohup.sh & `.
